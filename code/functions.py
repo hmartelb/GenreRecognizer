@@ -61,3 +61,18 @@ def get_model_memory_usage(model, batch_size):
 
 def value_or_default(value, default):
     return value if value is not None else default
+
+def trim_audio_silence(audio, threshold, frame_size):
+    n_iter = np.ceil(len(audio)/frame_size)
+    trailing_zeros = ((n_iter)*frame_size)-len(audio)
+    if(trailing_zeros > 0):
+        audio = np.pad(audio, [(0, trailing_zeros) for _ in range(audio.shape[1])], 'constant')
+
+    frames_out = []
+    for i in range(n_iter):
+        frame = audio[i*frame_size:(i+1)*frame_size, :]
+        rms_val = np.max(np.sqrt(np.mean(frame**2, axis=0)))
+        if(rms_val > threshold):
+            frames_out.append(frame)
+
+    return np.concatenate(frames_out, axis=0)
