@@ -89,7 +89,8 @@ if __name__ == '__main__':
 
     model = get_network(network_args)
     model.summary()
-    print("Memory usage:", get_model_memory_usage(model, int(args['batchsize'])), " GB")
+    batch_size = value_or_default(int(args['batchsize']), 32)
+    print("Memory usage:", get_model_memory_usage(model, batch_size), " GB")
 
     if(save):
         output_directory = os.path.join(args['directory'], args['name'])
@@ -100,7 +101,8 @@ if __name__ == '__main__':
                 'audioch': network_args['shape'][0],
                 'audiolen': value_or_default(args['audiolen'], 1),
                 'samplingrate': value_or_default(args['samplingrate'], 44100),
-                'ndft': network_args['n_dft']
+                'ndft': network_args['n_dft'],
+                'batchsize': batch_size
             }
             json.dump(parameters, f)
 
