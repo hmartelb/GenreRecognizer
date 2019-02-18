@@ -36,7 +36,7 @@ def load_model(directory, load_weights=True):
 
     return model
 
-def get_model_memory_usage(batch_size, model):
+def get_model_memory_usage(model, batch_size):
     shapes_mem_count = 0
     for l in model.layers:
         single_layer_mem = 1
@@ -58,3 +58,6 @@ def get_model_memory_usage(batch_size, model):
     total_memory = number_size*(batch_size*shapes_mem_count + trainable_count + non_trainable_count)
     gbytes = np.round(total_memory / (1024.0 ** 3), 3)
     return gbytes
+
+def value_or_default(value, default):
+    return value if value is not None else default
