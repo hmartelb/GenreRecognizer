@@ -10,6 +10,7 @@ from keras import Model
 from keras.layers import (Add, BatchNormalization, Dense, Input, LeakyReLU,
                           MaxPooling2D, SeparableConv2D)
 
+import functions
 from functions import get_model_memory_usage, save_model, value_or_default
 
 
@@ -87,7 +88,7 @@ if __name__ == '__main__':
 
     model = get_network(network_args)
     model.summary()
-    print(get_model_memory_usage(model, int(args['batchsize'])))
+    print("Memory usage:", get_model_memory_usage(model, int(args['batchsize'])), " GB")
 
     if(save):
         output_directory = os.path.join(args['directory'], args['name'])
