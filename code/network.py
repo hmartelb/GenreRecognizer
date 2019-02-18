@@ -1,4 +1,5 @@
 import argparse
+import json
 import os
 import sys
 
@@ -93,4 +94,14 @@ if __name__ == '__main__':
     if(save):
         output_directory = os.path.join(args['directory'], args['name'])
         save_model(model, output_directory)
-        print('Model saved to ', output_directory)
+        
+        with open(os.path.join(output_directory, 'parameters.json'), 'r') as f:
+            parameters = {
+                'audioch': network_args['shape'][0],
+                'audiolen': value_or_default(args['audiolen'], 1),
+                'samplingrate': value_or_default(args['samplingrate'], 44100),
+                'ndft': network_args['n_dft']
+            }
+            json.dump(parameters, f)
+
+        print('Model and data parameters saved to ', output_directory)
