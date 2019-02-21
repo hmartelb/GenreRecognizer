@@ -1,11 +1,53 @@
+import json
 import os
+
+import keras
+import numpy as np
+import requests
 import soundcloud
 import youtube_dl
-import json
-import requests
 
-def generator():
-    return "Not implemented"
+
+class Generator(keras.utils.Sequence):
+    def __init__(self, filenames, genres, batch_size=32, dim=(44100, 1), shuffle=True):
+        self.dim = dim
+        self.batch_size = batch_size
+        self.filenames = filenames
+        self.genres = genres
+        self.shuffle = shuffle
+        self.on_epoch_end()
+
+    def __len__(self):
+        'Denotes the number of batches per epoch'
+        return int(np.floor(len(self.filenames) / self.batch_size))
+
+    def __getitem__(self, index):
+        'Generate one batch of data'
+        indexes = self.indexes[index*self.batch_size:(index+1)*self.batch_size]         # Generate indexes of the batch
+        filenames_temp = [self.filenames[k] for k in indexes]                           # Find list of filenames
+        x,y = self.__data_generation(filenames_temp)                                    # Generate data
+        return x,y
+
+    def get_label(self, filename):
+        folder = os.path.split(os.path.dirname(filename))[-1]
+        label  = self.genres.index(folder)
+        return keras.utils.to_categorical(label, num_classes=len(self.genres))
+
+    def on_epoch_end(self):
+        'Updates indexes after each epoch'
+        self.indexes = np.arange(len(self.filenames))
+        if self.shuffle == True:
+            np.random.shuffle(self.indexes)
+
+    def __data_generation(self, filenames_temp):
+        'Generates data containing batch_size samples'                                  
+        x = np.empty((self.batch_size, *self.dim))
+        y = np.empty(self.batch_size)
+        # Generate data
+        for i, filename in enumerate(filenames_temp):
+            x[i,] = np.load(filename)[:,0:self.dim[1]]
+            y[i,] = self.get_label(filename)
+        return x,y
 
 def get_top_songs(genre, limit, token):
     top = requests.get('https://api-v2.soundcloud.com/charts?kind=top&genre=soundcloud:genres:' + genre + '&limit=' + str(limit) + '&oauth_token=' + token).json()
