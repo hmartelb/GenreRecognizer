@@ -4,29 +4,31 @@ This project's aim is to build a Convolutional Neural Network to classify songs 
 
 ## Getting Started
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
-
-### Prerequisites
-
-What things you need to install the software and how to install them
-
-```
-Give examples
-```
-
-### Installing
-
-A step by step series of examples that tell you how to get a development env running
-
-Say what the step will be
-
-```
-Give the example
-```
 
 ## Dataset
+
+The dataset is composed by the top 50 songs of each genre (as per dataset/genres.txt) downloaded from SoundCloud. The songs are classified in folders according to the genre.
+
+The input data of the network consists of 1 second audio frames, sliced from each song after applying amplitude normalization on the entire piece. The sampling rate of the audios is set to 44.1kHz, resampling any audio that originally came with a different sampling rate. 
+
+```
+At the time of writing these lines, the dataset has not been compiled yet.
+```
+
 ## Network architecture
+
+The network architecture from this work consists of the following stages:
+
+### Input feature extraction
+A time-frequency representation is extracted from the raw audio input by computing the spectrogram using Kapre. 
+
+### N-Residual Convolutional blocks
+### M-Dense layers
+
 ## Results
+
+This section will display the results. This project is still under development so there are no conclusive results yet. 
+
 ## Usage
 ## License
 
